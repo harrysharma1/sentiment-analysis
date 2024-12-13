@@ -220,7 +220,7 @@ pip-selfcheck.json
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,virtualenv,python
 
-dataset/
+datasets/*
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode
 
