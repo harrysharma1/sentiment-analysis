@@ -44,21 +44,29 @@ class Preprocessing():
                 
     def clean_datasets(self):
 
-     
-        if 'hate-speech' in self.raw_dataset_paths:
-            hate_speech = HateSpeechUtilities()
-            data_frame = pd.read_csv(self.raw_dataset_paths['hate-speech'])
-            print(data_frame.head())
-            data_frame['tweet'] = data_frame['tweet'].apply(lambda x:hate_speech.clean_hate_speech(x))
-            print(data_frame.head())
-            data_frame['tweet'] = data_frame['tweet'].apply(lambda x:hate_speech.remove_punctuation(x))
-            print(data_frame.head())
-            
-            clean_csv_path = os.path.join(os.getcwd(),'datasets/clean','hate-speech.csv')
-            data_frame.to_csv(clean_csv_path,index=0)
-            print (f"Cleaned data saved to: {clean_csv_path}")
-        else:
-            print ("Not created dataset.")
+        for filename in self.raw_dataset_paths.keys():
+            match filename:
+                case 'hate-speech':
+                    hate_speech = HateSpeechUtilities()
+                    data_frame = pd.read_csv(self.raw_dataset_paths['hate-speech'])
+                    print("Begin preprocess...")
+                    print(f"Head:\n{data_frame['tweet'].head()}\nTail:\n{data_frame['tweet'].tail()}")
+                    data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.clean_hate_speech(x))
+                    data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.remove_punctuation(x))
+                    data_frame['tweet'] = data_frame['tweet'].apply(lambda x: x.lower())
+                    data_frame['tweet'] = data_frame['tweet'].str.replace('\n',' ')
+                    data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.tokenization(x))
+                    data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.clean_tokens(x))
+                    print("Preprocess complete...")
+                    print(f"Head:\n{data_frame['tweet'].head()}\nTail:\n{data_frame['tweet'].tail()}")
+                    
+                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean','hate-speech.csv')
+                    data_frame.to_csv(clean_csv_path,index=0)
+                    print (f"Cleaned data saved to: {clean_csv_path}")
+                case _:
+                    print("Not created datasets.")
+                    
+       
 
                         
                         

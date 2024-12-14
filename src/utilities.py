@@ -12,5 +12,8 @@ class Utilities():
     def remove_punctuation(self, text):
         return "".join([i for i in text if i not in string.punctuation])
     
-        
+    def tokenization(self, text):
+        return text.split(' ')
     
+    def clean_tokens(self, text):
+        return [i for i in text if i != '']  

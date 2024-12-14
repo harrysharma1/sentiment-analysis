@@ -15,7 +15,7 @@ class HateSpeechUtilities(Utilities):
         tweet = re.sub(r'RT', '', tweet)
         
         tweet = re.sub(r'&#\d+;', '', tweet) 
-        
+        tweet = re.sub(r'&amp;', '', tweet) 
         tweet = tweet.lstrip(' ')
 
         return tweet
