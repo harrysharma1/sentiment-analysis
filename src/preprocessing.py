@@ -1,10 +1,7 @@
 import os
 import requests
 import pandas as pd
-import nltk
-from nltk.corpus import stopwords
-import re
-import string
+from src.hate_speech_preprocessing import HateSpeechUtilities
 
 
 class Preprocessing():
@@ -25,12 +22,6 @@ class Preprocessing():
             print(f"Error creating directories: {e}")
             raise
         
-        nltk.download("stopwords")
-        self.stop_words = set(stopwords.words('english'))
-    
-    def remove_punctuation(self, text):
-        return "".join([i for i in text if i not in string.punctuation])
-    
     def get_datasets(self):
         for filename, url in self.url.items():
             try:
@@ -53,34 +44,14 @@ class Preprocessing():
                 
     def clean_datasets(self):
 
-        def clean_hate_speech(tweet):
-            tweet = str(tweet)
-            
-            tweet = re.sub(r'RT\s+', '', tweet)
-            
-            tweet = re.sub(r'http\S+|www\S+|https\S+', '', tweet, flags=re.MULTILINE)
-            tweet = re.sub(r'\@\w+|\#w+', '', tweet)
-        
-            tweet = re.sub(r'&amp;|&lt;|&gt;|&quot;|&#\d+;', '', tweet)
-            
-            tweet = tweet.encode('ascii', 'ignore').decode('ascii')
-            
-            tweet = re.sub(r'["""]', '', tweet)
-            
-            tweet = re.sub(r'[^\w\s]', ' ', tweet)
-            tweet = re.sub(r'\d+', '', tweet)
-            
-            tweet = tweet.lower()
-            
-            tweet = re.sub(r'\s+', ' ', tweet)
-            tweet = tweet.strip()
-            tweet = ' '.join([word for word in tweet.split() if word not in self.stop_words])
-            return tweet
-        
+     
         if 'hate-speech' in self.raw_dataset_paths:
+            hate_speech = HateSpeechUtilities()
             data_frame = pd.read_csv(self.raw_dataset_paths['hate-speech'])
             print(data_frame.head())
-            data_frame['clean_tweet'] = data_frame['tweet'].apply(lambda x:self.remove_punctuation(x))
+            data_frame['tweet'] = data_frame['tweet'].apply(lambda x:hate_speech.clean_hate_speech(x))
+            print(data_frame.head())
+            data_frame['tweet'] = data_frame['tweet'].apply(lambda x:hate_speech.remove_punctuation(x))
             print(data_frame.head())
             
             clean_csv_path = os.path.join(os.getcwd(),'datasets/clean','hate-speech.csv')
