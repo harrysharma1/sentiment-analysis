@@ -14,17 +14,7 @@ class HateSpeechUtilities(Utilities):
         tweet = re.sub(r'@[\w]+', '', tweet) 
         tweet = re.sub(r'RT', '', tweet)
         
-        tweet = re.sub(r'&#8220;', '', tweet)
-        tweet = re.sub(r'&#128553;', '', tweet)
-        tweet = re.sub(r'&#128514;', '', tweet)
-        tweet = re.sub(r'&#128517;', '', tweet)
-        tweet = re.sub(r'&#8217;', '', tweet)
-        tweet = re.sub(r'&#128175;', '', tweet)
-        tweet = re.sub(r'&#128049;', '', tweet)
-        tweet = re.sub(r'&#128533;', '', tweet)
-        tweet = re.sub(r'&#128554;', '', tweet)
-        tweet = re.sub(r'&#128527;', '', tweet)
-        tweet = re.sub(r'&#128056;', '', tweet)
+        tweet = re.sub(r'&#\d+;', '', tweet) 
         
         tweet = tweet.lstrip(' ')
 
