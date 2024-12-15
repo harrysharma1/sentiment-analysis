@@ -28,7 +28,9 @@ class Preprocessing():
             "south-park-season-18":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-18.csv",
             "south-park-season-19":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-19.csv",
         }
-        self.raw_dataset_paths ={}
+        self.raw_dataset_paths = {}
+        self.clean_dataset_paths = {}
+        self.clean_dataset_text_col = {}
         
         try:
             datasets_path = os.path.join(os.getcwd(),'datasets')
@@ -83,6 +85,8 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'tweet'
                 case 'south-park-season-1':
                     south_park = SouthParkUtilities()
                     data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-1'])
@@ -97,6 +101,8 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
                 case 'south-park-season-2':
                     south_park = SouthParkUtilities()
                     data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-2'])
@@ -111,6 +117,8 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
 
                 case 'south-park-season-3':
                     south_park = SouthParkUtilities()
@@ -126,7 +134,9 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
-
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
+                     
                 case 'south-park-season-4':
                     south_park = SouthParkUtilities()
                     data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-4'])
@@ -141,7 +151,9 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
-
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
+                    
                 case 'south-park-season-5':
                     south_park = SouthParkUtilities()
                     data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-5'])
@@ -156,7 +168,9 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
-
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
+                    
                 case 'south-park-season-6':
                     south_park = SouthParkUtilities()
                     data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-6'])
@@ -171,6 +185,25 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
+                    
+                case 'south-park-season-7':
+                    south_park = SouthParkUtilities()
+                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-7'])
+                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
+                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
+                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
+                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
+                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
+                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
+                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
+                    
+                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
+                    data_frame.to_csv(clean_csv_path,index=0)
+                    print (f"Cleaned data saved to: {clean_csv_path}")
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
 
                 case 'south-park-season-7':
                     south_park = SouthParkUtilities()
@@ -186,22 +219,9 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
-
-                case 'south-park-season-7':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-7'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
                     
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-
                 case 'south-park-season-8':
                     south_park = SouthParkUtilities()
                     data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-8'])
@@ -216,7 +236,9 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
-
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
+                    
                 case 'south-park-season-9':
                     south_park = SouthParkUtilities()
                     data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-9'])
@@ -231,7 +253,9 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
-
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
+                    
                 case 'south-park-season-10':
                     south_park = SouthParkUtilities()
                     data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-10'])
@@ -246,6 +270,8 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
 
                 case 'south-park-season-11':
                     south_park = SouthParkUtilities()
@@ -261,6 +287,8 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
 
                 case 'south-park-season-12':
                     south_park = SouthParkUtilities()
@@ -276,6 +304,8 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
 
                 case 'south-park-season-13':
                     south_park = SouthParkUtilities()
@@ -291,6 +321,8 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
 
                 case 'south-park-season-14':
                     south_park = SouthParkUtilities()
@@ -306,6 +338,8 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
 
                 case 'south-park-season-15':
                     south_park = SouthParkUtilities()
@@ -321,6 +355,8 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
 
                 case 'south-park-season-16':
                     south_park = SouthParkUtilities()
@@ -336,6 +372,8 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
 
                 case 'south-park-season-17':
                     south_park = SouthParkUtilities()
@@ -351,6 +389,8 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
 
                 case 'south-park-season-18':
                     south_park = SouthParkUtilities()
@@ -366,6 +406,8 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
 
                 case 'south-park-season-19':
                     south_park = SouthParkUtilities()
@@ -381,6 +423,8 @@ class Preprocessing():
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
+                    self.clean_dataset_paths[filename] = clean_csv_path
+                    self.clean_dataset_text_col[filename] = 'Line'
 
                 case _:
                     print(f"Not created clean dataset for {filename}.")
