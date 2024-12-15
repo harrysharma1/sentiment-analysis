@@ -1,7 +1,7 @@
 import os
 import requests
 import pandas as pd
-from src.hate_speech_preprocessing import HateSpeechUtilities
+from src.preprocessing_utilities import HateSpeechUtilities
 
 
 class Preprocessing():
@@ -42,6 +42,7 @@ class Preprocessing():
             raise
         
     def get_datasets(self):
+        print("Pulling raw data from datasets...")
         for filename, url in self.url.items():
             try:
                 response = requests.get(url)
@@ -49,7 +50,6 @@ class Preprocessing():
                 with open(path, 'wb') as file:
                     file.write(response.content)
                 self.raw_dataset_paths[filename] = path
-                print(f"Data saved to: {path}")
             except requests.HTTPError as e:
                 match e.response.status_code:
                     case 404:
@@ -60,6 +60,9 @@ class Preprocessing():
                 print(f"Error:\nHostname was not resolvable.\nFull error: {e}")
             except FileExistsError as e:
                 print(f"Error:\nFile has already been created.")
+        for path in self.raw_dataset_paths.values():
+            print(f"Data saved to: {path}")    
+            
                 
     def clean_datasets(self):
         print("Begin preprocess...")
@@ -68,7 +71,6 @@ class Preprocessing():
                 case 'hate-speech':
                     hate_speech = HateSpeechUtilities()
                     data_frame = pd.read_csv(self.raw_dataset_paths['hate-speech'])
-                    print(f"Head:\n{data_frame['tweet'].head()}\nTail:\n{data_frame['tweet'].tail()}")
                     data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.clean(x))
                     data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.remove_punctuation(x))
                     data_frame['tweet'] = data_frame['tweet'].apply(lambda x: x.lower())
@@ -77,11 +79,12 @@ class Preprocessing():
                     data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.clean_tokens(x))
                     data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.remove_stop_words(x))
                     data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.lemmatize(x))
-                    print(f"Head:\n{data_frame['tweet'].head()}\nTail:\n{data_frame['tweet'].tail()}")
                     
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean','hate-speech.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
+                case 'south-park-season-1':
+                    pass
                 case _:
                     print(f"Not created clean dataset for {filename}.")
         print("Preprocess complete...") 
@@ -89,8 +92,5 @@ class Preprocessing():
 
                         
                         
-a = Preprocessing()
-a.get_datasets()
-a.clean_datasets()
 
             

@@ -20,4 +20,8 @@ class HateSpeechUtilities(Utilities):
 
         return tweet
     
+class SouthParkUtilities(Utilities):
+    def __init__(self):
+        super().__init__()
+    
     
