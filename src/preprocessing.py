@@ -8,6 +8,25 @@ class Preprocessing():
     def __init__(self):
         self.url = {
             "hate-speech":"https://raw.githubusercontent.com/t-davidson/hate-speech-and-offensive-language/refs/heads/master/data/labeled_data.csv",
+            "south-park-season-1":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-1.csv",
+            "south-park-season-2":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-2.csv",
+            "south-park-season-3":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-3.csv",
+            "south-park-season-4":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-4.csv",
+            "south-park-season-5":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-5.csv",
+            "south-park-season-6":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-6.csv",
+            "south-park-season-7":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-7.csv",
+            "south-park-season-8":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-8.csv",
+            "south-park-season-9":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-9.csv",
+            "south-park-season-10":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-10.csv",
+            "south-park-season-11":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-11.csv",
+            "south-park-season-12":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-12.csv",
+            "south-park-season-13":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-13.csv",
+            "south-park-season-14":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-14.csv",
+            "south-park-season-15":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-15.csv",
+            "south-park-season-16":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-16.csv",
+            "south-park-season-17":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-17.csv",
+            "south-park-season-18":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-18.csv",
+            "south-park-season-19":"https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-19.csv",
         }
         self.raw_dataset_paths ={}
         
@@ -43,29 +62,29 @@ class Preprocessing():
                 print(f"Error:\nFile has already been created.")
                 
     def clean_datasets(self):
-
+        print("Begin preprocess...")
         for filename in self.raw_dataset_paths.keys():
             match filename:
                 case 'hate-speech':
                     hate_speech = HateSpeechUtilities()
                     data_frame = pd.read_csv(self.raw_dataset_paths['hate-speech'])
-                    print("Begin preprocess...")
                     print(f"Head:\n{data_frame['tweet'].head()}\nTail:\n{data_frame['tweet'].tail()}")
-                    data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.clean_hate_speech(x))
+                    data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.clean(x))
                     data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.remove_punctuation(x))
                     data_frame['tweet'] = data_frame['tweet'].apply(lambda x: x.lower())
                     data_frame['tweet'] = data_frame['tweet'].str.replace('\n',' ')
                     data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.tokenization(x))
                     data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.clean_tokens(x))
-                    print("Preprocess complete...")
+                    data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.remove_stop_words(x))
+                    data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.lemmatize(x))
                     print(f"Head:\n{data_frame['tweet'].head()}\nTail:\n{data_frame['tweet'].tail()}")
                     
                     clean_csv_path = os.path.join(os.getcwd(),'datasets/clean','hate-speech.csv')
                     data_frame.to_csv(clean_csv_path,index=0)
                     print (f"Cleaned data saved to: {clean_csv_path}")
                 case _:
-                    print("Not created datasets.")
-                    
+                    print(f"Not created clean dataset for {filename}.")
+        print("Preprocess complete...") 
        
 
                         

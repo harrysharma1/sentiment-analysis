@@ -3,9 +3,9 @@ from src.utilities import *
 
 class HateSpeechUtilities(Utilities):
     def __init__(self):
-        pass
+        super().__init__()
     
-    def clean_hate_speech(self, tweet):
+    def clean(self, tweet):
         tweet = str(tweet)
 
         tweet = re.sub(r'&#8221;', '', tweet)
