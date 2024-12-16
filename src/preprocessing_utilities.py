@@ -1,6 +1,27 @@
 from src.utilities import *
 
 
+class GeneralPurposeUtilies(Utilities):
+    def __init__(self):
+        super().__init__()
+    
+    def is_likely_text_coloumn(self, series):
+        return series.apply(lambda x: isinstance(x, str)).mean() > 0.8
+        
+    def likely_text_column(self, series):
+        text_columns = [col for col in series.columns if self.is_likely_text_column(series[col])]
+        likely_text_column = [
+            col for col in text_columns if series[col].apply(lambda x: len(x) if isinstance(x, str) else 0).mean() > 30
+        ]
+        if likely_text_column:
+            for col in likely_text_column:
+                print(f"Preview of text column: '{col}':")
+                print(series[col].head())
+            else:
+                print("No likely text columns found will have to manually set this value.")
+    def clean(self, raw_path, filename):
+        pass
+
 class HateSpeechUtilities(Utilities):
     def __init__(self):
         super().__init__()
