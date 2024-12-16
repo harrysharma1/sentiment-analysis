@@ -1,5 +1,5 @@
-from src.train import SentimentNeuralNet
+from src.train import Preprocessing
 
-a = SentimentNeuralNet()
-
-a.train_dataset('hate-speech')
+a = Preprocessing()
+a.get_all_preset_datasets()
+a.clean_all_preset_datasets()

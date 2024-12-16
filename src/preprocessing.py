@@ -1,6 +1,7 @@
 import os
 import requests
 import pandas as pd
+import uuid
 from src.preprocessing_utilities import HateSpeechUtilities, SouthParkUtilities
 
 
@@ -43,7 +44,7 @@ class Preprocessing():
             print(f"Error creating directories: {e}")
             raise
         
-    def get_datasets(self):
+    def get_all_preset_datasets(self):
         print("Pulling raw data from datasets...")
         for filename, url in self.url.items():
             try:
@@ -66,369 +67,42 @@ class Preprocessing():
             print(f"Data saved to: {path}")    
             
                 
-    def clean_datasets(self):
+    def clean_all_preset_datasets(self):
         print("Begin preprocess...")
         for filename in self.raw_dataset_paths.keys():
             match filename:
                 case 'hate-speech':
                     hate_speech = HateSpeechUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['hate-speech'])
-                    data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.clean(x))
-                    data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.remove_punctuation(x))
-                    data_frame['tweet'] = data_frame['tweet'].apply(lambda x: x.lower())
-                    data_frame['tweet'] = data_frame['tweet'].str.replace('\n',' ')
-                    data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.tokenization(x))
-                    data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.clean_tokens(x))
-                    data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.remove_stop_words(x))
-                    data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'tweet'
-                case 'south-park-season-1':
+                    self.clean_dataset_paths[filename], self.clean_dataset_text_col[filename] = hate_speech.clean(self.raw_dataset_paths[filename], filename)
+                
+                case 'south-park-season-1'|'south-park-season-2'|'south-park-season-3'|'south-park-season-4'|'south-park-season-5'|'south-park-season-6'|'south-park-season-7'|'south-park-season-8'|'south-park-season-9'|'south-park-season-10'|'south-park-season-11'|'south-park-season-12'|'south-park-season-13'|'south-park-season-14'|'south-park-season-15'|'south-park-season-16'|'south-park-season-17'|'south-park-season-18'|'south-park-season-19':
                     south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-1'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-                case 'south-park-season-2':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-2'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-
-                case 'south-park-season-3':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-3'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-                     
-                case 'south-park-season-4':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-4'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-                    
-                case 'south-park-season-5':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-5'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-                    
-                case 'south-park-season-6':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-6'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-                    
-                case 'south-park-season-7':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-7'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-
-                case 'south-park-season-7':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-7'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-                    
-                case 'south-park-season-8':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-8'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-                    
-                case 'south-park-season-9':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-9'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-                    
-                case 'south-park-season-10':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-10'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-
-                case 'south-park-season-11':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-11'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-
-                case 'south-park-season-12':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-12'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-
-                case 'south-park-season-13':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-13'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-
-                case 'south-park-season-14':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-14'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-
-                case 'south-park-season-15':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-15'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-
-                case 'south-park-season-16':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-16'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-
-                case 'south-park-season-17':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-17'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-
-                case 'south-park-season-18':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-18'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-
-                case 'south-park-season-19':
-                    south_park = SouthParkUtilities()
-                    data_frame = pd.read_csv(self.raw_dataset_paths['south-park-season-19'])
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_punctuation(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: x.lower())
-                    data_frame['Line'] = data_frame['Line'].str.replace('\n','')
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.tokenization(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.clean_tokens(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.remove_stop_words(x))
-                    data_frame['Line'] = data_frame['Line'].apply(lambda x: south_park.lemmatize(x))
-                    
-                    clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
-                    data_frame.to_csv(clean_csv_path,index=0)
-                    print (f"Cleaned data saved to: {clean_csv_path}")
-                    self.clean_dataset_paths[filename] = clean_csv_path
-                    self.clean_dataset_text_col[filename] = 'Line'
-
+                    self.clean_dataset_paths[filename], self.clean_dataset_text_col[filename] = south_park.clean(self.raw_dataset_paths[filename],filename)
+            
                 case _:
                     print(f"Not created clean dataset for {filename}.")
-        print("Preprocess complete...") 
+        print("Preprocess complete...")
+       
+ 
+    def get_dataset(self, url="https://raw.githubusercontent.com/t-davidson/hate-speech-and-offensive-language/refs/heads/master/data/labeled_data.csv", filename=uuid.uuid4()):
+        try:
+            response = requests.get(url)
+            path = os.path.join(os.getcwd(), 'datasets/raw', f"{filename}.csv") 
+            with open(path, 'wb') as file:
+                file.write(response.content)
+            self.raw_dataset_paths[filename] = path
+        except requests.HTTPError as e:
+            match e.response.status_code:
+                case 404:
+                    print(f"Error:\nDataset not found.\nStatus code: {e.response.status_code}.")
+                case _ :
+                    print(f"Error:\nUnkown.\nStatus code: {e.response.status_code}")
+        except requests.ConnectionError as e:
+            print(f"Error:\nHostname was not resolvable.\nFull error: {e}")
+        except FileExistsError as e:
+            print(f"Error:\nFile has already been created.")
+        for path in self.raw_dataset_paths.values():
+            print(f"Data saved to: {path}")     
        
 
                         
