@@ -1,7 +1,8 @@
 import os
 import requests
 import pandas as pd
-import kagglehub
+import zipfile
+import subprocess
 import uuid
 from src.preprocessing_utilities import HateSpeechUtilities, SouthParkUtilities, GeneralPurposeUtilitiees
 
@@ -125,8 +126,8 @@ class Preprocessing():
         print("Preprocess complete...")  
     
     def get_kaggle_dataset(self, filename):
-        path = kagglehub.dataset_download(f"{filename}")
-
+        path = os.path.join(os.getcwd(), 'datasets/raw')
+        subprocess.run(['kaggle','datasets','download','-d',f'{filename}','-p',f'{path}'], check=True, text=True)
         print("Path to dataset files:", path) 
 
                         
