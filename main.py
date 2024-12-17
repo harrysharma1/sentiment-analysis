@@ -1,4 +1,5 @@
 from src.train import Preprocessing
 
 a = Preprocessing()
-a.get_dataset(url="https://raw.githubusercontent.com/t-davidson/hate-speech-and-offensive-language/refs/heads/master/data/labeled_data.csv", filename="skibidi_toilet")
+a.get_dataset(url="https://raw.githubusercontent.com/BobAdamsEE/SouthParkData/refs/heads/master/by-season/Season-1.csv", filename="skibidi_toilet")
+a.clean_dataset("skibidi_toilet")

@@ -1,11 +1,11 @@
 from src.utilities import *
 
 
-class GeneralPurposeUtilies(Utilities):
+class GeneralPurposeUtilitiees(Utilities):
     def __init__(self):
         super().__init__()
     
-    def is_likely_text_coloumn(self, series):
+    def is_likely_text_column(self, series):
         return series.apply(lambda x: isinstance(x, str)).mean() > 0.8
         
     def likely_text_column(self, series):
@@ -16,12 +16,25 @@ class GeneralPurposeUtilies(Utilities):
         if likely_text_column:
             for col in likely_text_column:
                 print(f"Preview of text column: '{col}':")
-                print(series[col].head())
-            else:
-                print("No likely text columns found will have to manually set this value.")
+        return col
+    
     def clean(self, raw_path, filename):
-        pass
-
+        data_frame = pd.read_csv(raw_path)
+        col = self.likely_text_column(data_frame)
+        data_frame[col] = data_frame[col].apply(lambda x: self.remove_punctuation(x))
+        data_frame[col] = data_frame[col].apply(lambda x: x.lower())
+        data_frame[col] = data_frame[col].str.replace('\n',' ')
+        data_frame[col] = data_frame[col].apply(lambda x: self.tokenization(x))
+        data_frame[col] = data_frame[col].apply(lambda x: self.clean_tokens(x))
+        data_frame[col] = data_frame[col].apply(lambda x: self.remove_stop_words(x))
+        data_frame[col] = data_frame[col].apply(lambda x: self.lemmatize(x))
+        
+        clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
+        data_frame.to_csv(clean_csv_path,index=0)
+        print (f"Cleaned data saved to: {clean_csv_path}")
+        print (f"As this is general purpose, please double check whether the title for text input column was correctly estimated.")
+        return (clean_csv_path, col)
+    
 class HateSpeechUtilities(Utilities):
     def __init__(self):
         super().__init__()
@@ -42,16 +55,15 @@ class HateSpeechUtilities(Utilities):
         return tweet
     
     def clean(self, raw_path, filename):
-        hate_speech = HateSpeechUtilities()
         data_frame = pd.read_csv(raw_path)
-        data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.clean_tweet(x))
-        data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.remove_punctuation(x))
+        data_frame['tweet'] = data_frame['tweet'].apply(lambda x: self.clean_tweet(x))
+        data_frame['tweet'] = data_frame['tweet'].apply(lambda x: self.remove_punctuation(x))
         data_frame['tweet'] = data_frame['tweet'].apply(lambda x: x.lower())
         data_frame['tweet'] = data_frame['tweet'].str.replace('\n',' ')
-        data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.tokenization(x))
-        data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.clean_tokens(x))
-        data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.remove_stop_words(x))
-        data_frame['tweet'] = data_frame['tweet'].apply(lambda x: hate_speech.lemmatize(x))
+        data_frame['tweet'] = data_frame['tweet'].apply(lambda x: self.tokenization(x))
+        data_frame['tweet'] = data_frame['tweet'].apply(lambda x: self.clean_tokens(x))
+        data_frame['tweet'] = data_frame['tweet'].apply(lambda x: self.remove_stop_words(x))
+        data_frame['tweet'] = data_frame['tweet'].apply(lambda x: self.lemmatize(x))
         
         clean_csv_path = os.path.join(os.getcwd(),'datasets/clean',f'{filename}.csv')
         data_frame.to_csv(clean_csv_path,index=0)

@@ -2,7 +2,7 @@ import os
 import requests
 import pandas as pd
 import uuid
-from src.preprocessing_utilities import HateSpeechUtilities, SouthParkUtilities
+from src.preprocessing_utilities import HateSpeechUtilities, SouthParkUtilities, GeneralPurposeUtilitiees
 
 
 class Preprocessing():
@@ -78,7 +78,6 @@ class Preprocessing():
                 case 'south-park-season-1'|'south-park-season-2'|'south-park-season-3'|'south-park-season-4'|'south-park-season-5'|'south-park-season-6'|'south-park-season-7'|'south-park-season-8'|'south-park-season-9'|'south-park-season-10'|'south-park-season-11'|'south-park-season-12'|'south-park-season-13'|'south-park-season-14'|'south-park-season-15'|'south-park-season-16'|'south-park-season-17'|'south-park-season-18'|'south-park-season-19':
                     south_park = SouthParkUtilities()
                     self.clean_dataset_paths[filename], self.clean_dataset_text_col[filename] = south_park.clean(self.raw_dataset_paths[filename],filename)
-            
                 case _:
                     print(f"Not created clean dataset for {filename}.")
         print("Preprocess complete...")
@@ -102,7 +101,27 @@ class Preprocessing():
         except FileExistsError as e:
             print(f"Error:\nFile has already been created.")
         for path in self.raw_dataset_paths.values():
-            print(f"Data saved to: {path}")     
+            print(f"Data saved to: {path}")
+            
+    def clean_dataset(self, filename):
+        print("Begin preprocess...")
+        if filename not in self.raw_dataset_paths.keys():
+            print(f"File not found make sure the that {filename}.csv can be found within the datasets/raw folder")
+        else:
+            match filename:
+                case 'hate-speech':
+                    hate_speech = HateSpeechUtilities()
+                    self.clean_dataset_paths[filename], self.clean_dataset_text_col[filename] = hate_speech.clean(self.raw_dataset_paths[filename], filename)
+                
+                case 'south-park-season-1'|'south-park-season-2'|'south-park-season-3'|'south-park-season-4'|'south-park-season-5'|'south-park-season-6'|'south-park-season-7'|'south-park-season-8'|'south-park-season-9'|'south-park-season-10'|'south-park-season-11'|'south-park-season-12'|'south-park-season-13'|'south-park-season-14'|'south-park-season-15'|'south-park-season-16'|'south-park-season-17'|'south-park-season-18'|'south-park-season-19':
+                    south_park = SouthParkUtilities()
+                    self.clean_dataset_paths[filename], self.clean_dataset_text_col[filename] = south_park.clean(self.raw_dataset_paths[filename],filename)
+            
+                case _:
+                    general_utils = GeneralPurposeUtilitiees()
+                    general_utils.clean(self.raw_dataset_paths[filename], filename)
+                    
+        print("Preprocess complete...")  
        
 
                         
